@@ -9,6 +9,12 @@ server.use(express.json());
 // "Basic" users
 const users = ['Juliano', 'João', 'Pedro', 'Maria'];
 
+// Basic Middleware
+server.use((req, res, next) => {
+  console.log(`Metodo: ${req.method};\nURL: ${req.url}`);
+  next();
+});
+
 // GET - List All Users
 server.get('/users/', (req, res) => {
   return res.json(users);
