@@ -23,13 +23,21 @@ function userExists(req, res, next) {
   next();
 }
 
+// Middleware to validate index in Array
+function indexExists(req, res, next) {
+  if (!users[req.params.index]) {
+    return res.status(400).json({ error: 'User index does not exists' });
+  }
+  next();
+}
+
 // GET - List All Users
 server.get('/users/', (req, res) => {
   return res.json(users);
 });
 
 // GET - List One User
-server.get('/users/:index', (req, res) => {
+server.get('/users/:index', indexExists, (req, res) => {
   const { index } = req.params;
 
   return res.json(users[index]);
@@ -43,7 +51,7 @@ server.post('/users/', userExists, (req, res) => {
 });
 
 // PUT - Edit One User using index in array - Middleware to validate name field
-server.put('/users/:index', userExists, (req, res) => {
+server.put('/users/:index', userExists, indexExists, (req, res) => {
   const { index } = req.params;
   const { name } = req.body;
   users[index] = name;
@@ -51,7 +59,7 @@ server.put('/users/:index', userExists, (req, res) => {
 });
 
 // DELETE - Delete One User using index in array
-server.delete('/users/:index', (req, res) => {
+server.delete('/users/:index', indexExists, (req, res) => {
   const { index } = req.params;
   users.splice(index, 1);
   return res.json(users);
